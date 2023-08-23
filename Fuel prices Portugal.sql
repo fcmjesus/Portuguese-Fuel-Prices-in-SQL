@@ -1,11 +1,11 @@
 #Going through the data to start. Nearly 15 years' worth of prices for the most commonly used types of fuel in Portugal.
 
-	SELECT *
+SELECT *
 FROM diesel 
 ORDER BY date
 LIMIT 20;
 
-	SELECT *
+SELECT *
 FROM gasoline 
 ORDER BY date 
 LIMIT 20;
@@ -42,15 +42,15 @@ WHERE date BETWEEN '2015-09-04' AND '2015-09-22';
 #Let's have a look at some basic measures across the different kinds of fuel in the past ten years.
 #Checking minimum, maximum and average prices.
 
-	SELECT  
-		ROUND(MIN(d.avg_diesel), 4) AS lowest_diesel_price,
-		MAX(d.avg_diesel) AS highest_diesel_price,
+SELECT  
+	ROUND(MIN(d.avg_diesel), 4) AS lowest_diesel_price,
+	MAX(d.avg_diesel) AS highest_diesel_price,
         ROUND(AVG(d.avg_diesel), 4) AS average_diesel_price,
         MIN(g.avg_gasoline95) AS lowest_gasoline95_price,
-		MAX(g.avg_gasoline95) AS highest_gasoline95_price,
+	MAX(g.avg_gasoline95) AS highest_gasoline95_price,
         ROUND(AVG(g.avg_gasoline95), 4) AS average_gasoline95_price,
-		MIN(g.gasoline98) AS lowest_gasoline98_price,
-		MAX(g.gasoline98) AS highest_gasoline98_price,
+	MIN(g.gasoline98) AS lowest_gasoline98_price,
+	MAX(g.gasoline98) AS highest_gasoline98_price,
         ROUND(AVG(g.gasoline98), 4) AS average_gasoline98_price
 FROM diesel as d
 JOIN gasoline as g
@@ -59,20 +59,20 @@ WHERE d.date BETWEEN '2013-08-22' AND '2023-08-22';
 
 #I tend to fill up my tank weekly. Having a look at weekly rolling averages.
 
-	SELECT  
-		d.date,
-		d.avg_diesel,
-		ROUND(AVG(avg_diesel) OVER (
-        ORDER BY date
-        ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), 4) AS diesel_moving_average_7_days,
-        g.avg_gasoline95,
+SELECT  
+	d.date,
+	d.avg_diesel,
+	ROUND(AVG(avg_diesel) OVER (
+ORDER BY date
+ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), 4) AS diesel_moving_average_7_days,
+       		g.avg_gasoline95,
 		ROUND(AVG(g.avg_gasoline95) OVER (
-        ORDER BY date
-        ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), 4) AS gasoline95_moving_average_7_days,
-        g.gasoline98,
-        ROUND(AVG(g.gasoline98) OVER (
-        ORDER BY date
-        ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), 4) AS gasoline98_moving_average_7_days
+ORDER BY date
+ROWS BETWEEN 	3 PRECEDING AND 3 FOLLOWING), 4) AS gasoline95_moving_average_7_days,
+       		g.gasoline98,
+       		ROUND(AVG(g.gasoline98) OVER (
+ORDER BY date
+ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), 4) AS gasoline98_moving_average_7_days
 FROM diesel AS d
 JOIN gasoline AS g
 ON d.date = g.date 
@@ -81,26 +81,26 @@ ORDER BY 1;
 #Unsurprisingly, diesel has had the lowest average price overall. 
 #I've been driving a diesel car in the past ten years, so let's focus on that type of fuel now. Again, here's the average.
 
-	SELECT 
-		ROUND(AVG(avg_diesel), 4) AS diesel_avg_10years
+SELECT 
+	ROUND(AVG(avg_diesel), 4) AS diesel_avg_10years
 FROM diesel
 WHERE date BETWEEN '2013-08-22' AND '2023-08-22';
 
 #And now the highest price.
 
-	SELECT
-		date,
-		avg_diesel AS max_avg_diesel
+SELECT
+	date,
+	avg_diesel AS max_avg_diesel
 FROM diesel
 WHERE  avg_diesel = (SELECT MAX(avg_diesel) FROM diesel) AND date BETWEEN '2013-08-22' AND '2023-08-22';
 
 #I hope I didn't fill up my tank on the 23rd of June last year. Not a good day.
 #I wonder if June 2022 was the most expensive month for diesel since 2013?
 
-	SELECT	
-		MONTHNAME(date) AS month, 
-		YEAR(date) AS year, 
-		ROUND(AVG(avg_diesel), 4) AS average_diesel_price
+SELECT	
+	MONTHNAME(date) AS month, 
+	YEAR(date) AS year, 
+	ROUND(AVG(avg_diesel), 4) AS average_diesel_price
 FROM diesel
 WHERE date BETWEEN '2013-01-01' AND '2023-08-22'
 GROUP BY 2, 1
@@ -109,10 +109,10 @@ LIMIT 20;
 
 #It was indeed. 2022 was probably the most expensive year as well. Let's rank the decade.
 
-	SELECT  
-		RANK() OVER (ORDER BY AVG(avg_diesel) DESC) AS ranking,
-		YEAR(date) AS year, 
-		ROUND(AVG(avg_diesel), 4) AS average_diesel_price
+SELECT  
+	RANK() OVER (ORDER BY AVG(avg_diesel) DESC) AS ranking,
+	YEAR(date) AS year, 
+	ROUND(AVG(avg_diesel), 4) AS average_diesel_price
 FROM diesel
 WHERE date BETWEEN '2013-01-01' AND '2023-08-22'
 GROUP BY 2
@@ -122,14 +122,14 @@ ORDER BY 3 DESC;
 #Let's label prices as "high" and "low" and then counting number of days in 2023 when diesel has been cheaper than 1.5€:
 
 WITH Categories AS (
-    SELECT
-		date,
+SELECT
+	date,
         avg_diesel,
         CASE WHEN avg_diesel < 1.50 THEN 'Low' ELSE 'High' END AS price_category
     FROM diesel
 )
-	SELECT 
-		COUNT(*)
+    SELECT 
+	COUNT(*)
 FROM Categories
 WHERE price_category = "Low" AND date BETWEEN '2023-01-01' AND '2023-08-22';
 
@@ -139,21 +139,21 @@ WHERE price_category = "Low" AND date BETWEEN '2023-01-01' AND '2023-08-22';
 #If I'd done it ten years ago, how much money would I have saved?
 
 WITH ThisYear AS (
-    SELECT
-        ROUND((AVG(avg_diesel) * 100), 2) AS this_year_average
-    FROM diesel
-    WHERE date >= '2023-07-28' AND date <= '2023-08-03'
+SELECT
+	ROUND((AVG(avg_diesel) * 100), 2) AS this_year_average
+FROM diesel
+WHERE date >= '2023-07-28' AND date <= '2023-08-03'
 ),
 TenYearsAgo AS (
-   SELECT
+SELECT
         ROUND((AVG(avg_diesel) * 100), 2) AS ten_years_ago_average
-    FROM diesel
-    WHERE date >= '2013-07-28' AND date <= '2013-08-03'
+FROM diesel
+WHERE date >= '2013-07-28' AND date <= '2013-08-03'
 )
-	SELECT
-		ThisYear.this_year_average AS this_year_average,
-		TenYearsAgo.ten_years_ago_average AS ten_years_ago_average,
-		ROUND((ThisYear.this_year_average - TenYearsAgo.ten_years_ago_average), 2) AS difference
+SELECT
+	ThisYear.this_year_average AS this_year_average,
+	TenYearsAgo.ten_years_ago_average AS ten_years_ago_average,
+	ROUND((ThisYear.this_year_average - TenYearsAgo.ten_years_ago_average), 2) AS difference
 FROM ThisYear
 JOIN TenYearsAgo ON 1=1;
 
