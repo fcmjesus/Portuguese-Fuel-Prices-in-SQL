@@ -1,4 +1,4 @@
-# projects - Fuel Prices
+# Portuguese Fuel Prices 2008-2023 
 
 MySQL project analysing data on fuel prices in Portugal since 2008, considering the three most popular fuel types in Portugal (diesel, gasoline 95 and gasoline 98) and then focusing on the one I use the most, diesel.
 
