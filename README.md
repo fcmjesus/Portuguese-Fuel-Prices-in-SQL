@@ -6,4 +6,4 @@ Data was taken from the DGEG (Portuguese Geology and Energy Department) website 
 
 Initial data cleaning was done using Excel, splitting the dataset in two and converting data from long to wide format using a pivot table. Date format was also updated to facilitate import into MySQL.
 
-Further data cleaning and data analysis done on MySQL. Comments throughout in the SQL file.
+Further data cleaning and data analysis done on MySQL. Comment and explanations in the SQL file.
