@@ -10,7 +10,8 @@ FROM gasoline
 ORDER BY date 
 LIMIT 20;
 
-#It seems there are two columns for both diesel and gasoline 95. One of them only goes until September 2021, but before than there is a period when both columns have different values, as they're taken from different gas stations. 
+#It seems there are two columns for both diesel and gasoline 95. 
+#One of them only goes until September 2021, but before than there is a period when both columns have different values, as they're taken from different gas stations. 
 #Let's merge the columns and find the average price when both columns have different values.
 
 ALTER TABLE diesel
@@ -79,14 +80,14 @@ ON d.date = g.date
 ORDER BY 1;
 
 #Unsurprisingly, diesel has had the lowest average price overall. 
-#I've been driving a diesel car in the past ten years, so let's focus on that type of fuel now. Again, here's the average.
+#I've been driving a diesel car in the past ten years, so let's focus on that type of fuel now. Again, here's its average price since 2013.
 
 SELECT 
 	ROUND(AVG(avg_diesel), 4) AS diesel_avg_10years
 FROM diesel
 WHERE date BETWEEN '2013-08-22' AND '2023-08-22';
 
-#And now the highest price.
+#And now let's find out when price hit its peak.
 
 SELECT
 	date,
@@ -118,8 +119,8 @@ WHERE date BETWEEN '2013-01-01' AND '2023-08-22'
 GROUP BY 2
 ORDER BY 3 DESC;
 
-#2022 was bad, and 2023 is slowly closing in. 
-#Let's label prices as "high" and "low" and then counting number of days in 2023 when diesel has been cheaper than 1.5€:
+#2022 was bad for drivers, and 2023 is slowly closing in. 
+#Let's label prices as "high" and "low" and then count the number of days in 2023 when diesel has been cheaper than 1.5€ in Portugal.
 
 WITH Categories AS (
 SELECT
@@ -134,8 +135,9 @@ FROM Categories
 WHERE price_category = "Low" AND date BETWEEN '2023-01-01' AND '2023-08-22';
 
 #Only 90 days. Three out of eight months so far.
-#To finish on a positive not, let's consider my vacation.
-#I went on a driving vacation from July 28th to August 3rd this year, driving around 2000km in a week. My car does 100km with around 5l of diesel, so that week took around 100l.
+#To finish on a positive note, let's consider my vacation.
+#I went on a driving vacation from July 28th to August 3rd this year, driving around 2000km in a week. 
+#My car does 100km with around 5 liters of diesel, so that driving all those kilometers took around 100 liters.
 #If I'd done it ten years ago, how much money would I have saved?
 
 WITH ThisYear AS (
@@ -157,4 +159,4 @@ SELECT
 FROM ThisYear
 JOIN TenYearsAgo ON 1=1;
 
-#More than 20€. I'd better start cycling.
+#More than 20€, evidently. I'd better start cycling.
